@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
-const users = require("./routes/api/users");
+const user = require("./routes/api/users");
 const profile = require("./routes/api/profile");
 const passport = require("passport");
 
@@ -22,7 +22,7 @@ mongoose
 
 //Passport middleware
 app.use(passport.initialize());
-require('./config/passport')(passport);
+require("./config/passport")(passport);
 
 //First route
 app.get("/", (req, res) => {
@@ -30,7 +30,7 @@ app.get("/", (req, res) => {
 });
 
 //Use routes
-app.use("/api/users", users);
+app.use("/api/users", user);
 app.use("/api/profile", profile);
 app.use("/api/posts", posts);
 
