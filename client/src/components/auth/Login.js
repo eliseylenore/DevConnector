@@ -1,6 +1,10 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 import classnames from "classnames";
 import axios from "axios";
+import PropTypes from "prop-types";
+import { loginUser } from "../../actions/authActions";
 
 class Login extends Component {
   constructor() {
@@ -26,10 +30,20 @@ class Login extends Component {
       email: this.state.email,
       password: this.state.password
     };
-    axios
-      .post("/api/users/login", user)
-      .then(token => console.log(token))
-      .catch(err => this.setState({ errors: err.response.data }));
+
+    this.props.loginUser(user);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.auth.isAuthenticated) {
+      this.props.history.push("/dashboard");
+    }
+
+    if (nextProps.errors) {
+      this.setState({
+        errors: nextProps.errors
+      });
+    }
   }
 
   render() {
@@ -90,4 +104,16 @@ class Login extends Component {
   }
 }
 
-export default Login;
+Login.propTypes = {
+  loginUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired
+};
+
+// what kind of data do you want from the store
+const mapStateToProps = state => ({
+  auth: state.auth,
+  errors: state.errors
+});
+
+export default connect(mapStateToProps, { loginUser })(withRouter(Login));
